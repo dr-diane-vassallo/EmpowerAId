@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help the Flower Grow!</title>
+  <style>
+    :root {
+      --ink: #24415a;
+      --muted: #667085;
+      --sky: #bfefff;
+      --sky-soft: #ecfbff;
+      --card: rgba(255,255,255,0.93);
+      --line: rgba(36,65,90,0.14);
+      --shadow: 0 16px 32px rgba(59,130,246,0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 11%, rgba(255, 225, 88, 0.62), transparent 18%),
+        linear-gradient(180deg, #bfefff 0%, #ecfbff 48%, #f7ffe7 100%);
+      min-height: 100vh;
+    }
+
+    header {
+      width: min(1200px, 94vw);
+      margin: 0 auto;
+      padding: 22px 0 8px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.1rem, 5vw, 4rem);
+      color: #24527a;
+      text-shadow: 0 4px 0 rgba(255,255,255,0.8);
+    }
+
+    header p {
+      margin: 8px auto 0;
+      max-width: 860px;
+      color: var(--muted);
+      font-weight: bold;
+      font-size: 1.15rem;
+      line-height: 1.35;
+    }
+
+    .learning {
+      width: min(1200px, 94vw);
+      margin: 12px auto 18px;
+      padding: 12px 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.78);
+      border: 2px solid rgba(255,255,255,0.95);
+      box-shadow: var(--shadow);
+      text-align: center;
+      font-weight: bold;
+      line-height: 1.35;
+    }
+
+    .main {
+      width: min(1500px, 96vw);
+      margin: 0 auto 24px;
+      display: grid;
+      grid-template-columns: 390px minmax(560px, 1fr) 390px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border: 2px solid rgba(255,255,255,0.95);
+      border-radius: 30px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      color: #24527a;
+      font-size: 1.45rem;
+    }
+
+    .short {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.35;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 1.05rem;
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 74px;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      background: #fffdf7;
+      padding: 12px;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 1rem;
+      resize: vertical;
+      outline: none;
+    }
+
+    .slider-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 24px;
+      background: #f9fcff;
+      border: 2px solid rgba(84,183,255,0.16);
+    }
+
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .slider-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .slider-value {
+      min-width: 128px;
+      text-align: center;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #e8f7ff;
+      color: #24527a;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #54b7ff;
+      cursor: pointer;
+    }
+
+    .range-labels {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .73rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 22px;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 1.15rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #24415a;
+      box-shadow: 0 8px 0 rgba(36,82,122,0.12);
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.03);
+    }
+
+    button:active {
+      transform: translateY(4px);
+      box-shadow: 0 3px 0 rgba(36,82,122,0.12);
+    }
+
+    button:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .grow-btn {
+      background: #8af06c;
+      font-size: 1.35rem;
+      padding: 16px;
+    }
+
+    .reset-btn {
+      background: #ffd97a;
+    }
+
+    .garden-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .garden-top {
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.78);
+      border-bottom: 2px solid rgba(255,255,255,0.95);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #fff3b0;
+      color: #7a5315;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .badge.stage {
+      background: #e8f7ff;
+      color: #24527a;
+    }
+
+    .garden {
+      position: relative;
+      height: 665px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 12% 15%, #ffe66d 0 46px, rgba(255,230,109,0.38) 47px 76px, transparent 78px),
+        linear-gradient(180deg, #c6f3ff 0%, #effdff 58%, #9be564 59%, #62c95d 100%);
+      transition: filter .16s ease, background .16s ease;
+    }
+
+    .cloud {
+      position: absolute;
+      background: #fff;
+      border-radius: 999px;
+      opacity: .9;
+      filter: drop-shadow(0 4px 4px rgba(0,0,0,.04));
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border-radius: 999px;
+    }
+
+    .cloud.one {
+      width: 120px;
+      height: 38px;
+      left: 72px;
+      top: 68px;
+    }
+
+    .cloud.one::before {
+      width: 58px;
+      height: 58px;
+      left: 18px;
+      top: -25px;
+    }
+
+    .cloud.one::after {
+      width: 48px;
+      height: 48px;
+      left: 62px;
+      top: -18px;
+    }
+
+    .cloud.two {
+      width: 150px;
+      height: 42px;
+      right: 72px;
+      top: 96px;
+    }
+
+    .cloud.two::before {
+      width: 70px;
+      height: 70px;
+      left: 26px;
+      top: -35px;
+    }
+
+    .cloud.two::after {
+      width: 56px;
+      height: 56px;
+      left: 80px;
+      top: -22px;
+    }
+
+    .weather-note,
+    .countdown-note {
+      position: absolute;
+      right: 20px;
+      z-index: 40;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.88);
+      color: #24527a;
+      font-weight: bold;
+    }
+
+    .weather-note {
+      top: 22px;
+    }
+
+    .countdown-note {
+      top: 70px;
+      background: rgba(255,248,214,.94);
+      color: #7a5315;
+    }
+
+    .flower-area {
+      position: absolute;
+      left: 50%;
+      bottom: 70px;
+      width: 350px;
+      height: 530px;
+      transform: translateX(-50%);
+    }
+
+    /* The complete above-soil plant bends as one group from the soil line. */
+    .plant-group {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 350px;
+      height: 530px;
+      transform-origin: 50% 456px;
+      z-index: 8;
+      transition: transform .14s ease, filter .14s ease;
+    }
+
+    .stem {
+      position: absolute;
+      left: 50%;
+      bottom: 74px;
+      width: 22px;
+      height: 0;
+      transform: translateX(-50%);
+      transform-origin: bottom center;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2fb85b, #7be279);
+      transition: height .12s linear, background .14s ease, filter .14s ease;
+      z-index: 4;
+    }
+
+    .leaf {
+      position: absolute;
+      left: 50%;
+      bottom: 74px;
+      width: 72px;
+      height: 38px;
+      opacity: 0;
+      background: #48c774;
+      border-radius: 80% 20% 80% 20%;
+      transition: left .12s linear, bottom .12s linear, transform .14s ease, opacity .14s ease, background .14s ease, filter .14s ease;
+      z-index: 6;
+    }
+
+    .leaf.left {
+      transform-origin: 100% 50%;
+      border-radius: 20% 80% 20% 80%;
+    }
+
+    .leaf.right {
+      transform-origin: 0% 50%;
+    }
+
+    .flower-head {
+      position: absolute;
+      left: 50%;
+      bottom: 74px;
+      width: 142px;
+      height: 142px;
+      opacity: 0;
+      transform: translateX(-50%) scale(0);
+      transition: bottom .12s linear, transform .14s ease, opacity .14s ease, filter .14s ease;
+      z-index: 10;
+    }
+
+    .petal {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 52px;
+      height: 74px;
+      background: #ff75b7;
+      border-radius: 50% 50% 45% 45%;
+      transform-origin: 50% 100%;
+      box-shadow: inset -4px -6px rgba(255,255,255,.18);
+      transition: background .14s ease, opacity .14s ease, filter .14s ease;
+    }
+
+    .petal.p1 { transform: translate(-50%, -100%) rotate(0deg); }
+    .petal.p2 { transform: translate(-50%, -100%) rotate(60deg); }
+    .petal.p3 { transform: translate(-50%, -100%) rotate(120deg); }
+    .petal.p4 { transform: translate(-50%, -100%) rotate(180deg); }
+    .petal.p5 { transform: translate(-50%, -100%) rotate(240deg); }
+    .petal.p6 { transform: translate(-50%, -100%) rotate(300deg); }
+
+    .face {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 66px;
+      height: 66px;
+      transform: translate(-50%, -50%);
+      background: #ffd84d;
+      border: 4px solid rgba(154,101,20,.18);
+      border-radius: 50%;
+      z-index: 13;
+      box-shadow: inset -4px -5px rgba(255,255,255,.25);
+      transition: background .14s ease;
+    }
+
+    .eye {
+      position: absolute;
+      top: 23px;
+      width: 7px;
+      height: 7px;
+      background: #3d2b1f;
+      border-radius: 50%;
+    }
+
+    .eye.left { left: 19px; }
+    .eye.right { right: 19px; }
+
+    .mouth {
+      position: absolute;
+      left: 50%;
+      top: 38px;
+      width: 26px;
+      height: 13px;
+      transform: translateX(-50%);
+      border-bottom: 4px solid #3d2b1f;
+      border-radius: 0 0 999px 999px;
+    }
+
+    .scorch-spot {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(92,40,18,.58);
+      opacity: 0;
+      z-index: 12;
+      transition: opacity .14s ease, transform .14s ease;
+    }
+
+    .scorch-spot.s1 { width: 18px; height: 18px; left: 72px; top: 34px; }
+    .scorch-spot.s2 { width: 14px; height: 14px; right: 76px; top: 68px; }
+    .scorch-spot.s3 { width: 12px; height: 12px; left: 44px; top: 88px; }
+
+    .sad-drop {
+      position: absolute;
+      width: 10px;
+      height: 16px;
+      border-radius: 999px 999px 999px 0;
+      background: rgba(84,183,255,.76);
+      opacity: 0;
+      z-index: 14;
+      transform: rotate(45deg);
+      transition: opacity .14s ease;
+    }
+
+    .sad-drop.d1 { left: 86px; top: 88px; }
+    .sad-drop.d2 { right: 88px; top: 92px; }
+
+    .pot {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 176px;
+      height: 98px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, #ffb36b, #e6773e);
+      border-radius: 0 0 36px 36px;
+      border: 4px solid rgba(120,57,24,.18);
+      z-index: 24;
+    }
+
+    .pot::before {
+      content: "";
+      position: absolute;
+      left: -15px;
+      top: -23px;
+      width: 206px;
+      height: 40px;
+      border-radius: 999px;
+      background: #ffca8a;
+      border: 4px solid rgba(120,57,24,.16);
+    }
+
+    .soil {
+      position: absolute;
+      left: 50%;
+      bottom: 80px;
+      width: 156px;
+      height: 34px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: #7b4a2a;
+      z-index: 25;
+      transition: background .14s ease;
+    }
+
+    .seed {
+      position: absolute;
+      left: 50%;
+      bottom: 96px;
+      width: 34px;
+      height: 24px;
+      transform: translateX(-50%) rotate(-12deg);
+      background: linear-gradient(135deg, #a16207, #7c2d12);
+      border-radius: 60% 45% 55% 45%;
+      border: 3px solid rgba(92,45,13,.18);
+      z-index: 26;
+      transition: opacity .14s ease, transform .14s ease;
+      box-shadow: inset -4px -3px rgba(255,255,255,.18);
+    }
+
+    .seed::after {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 6px;
+      width: 8px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.35);
+    }
+
+    .puddle {
+      position: absolute;
+      left: 50%;
+      bottom: 54px;
+      width: 220px;
+      height: 42px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: rgba(84,183,255,.52);
+      opacity: 0;
+      transition: opacity .14s ease, width .14s ease;
+      z-index: 1;
+    }
+
+    .soil-crack {
+      position: absolute;
+      left: 50%;
+      bottom: 103px;
+      width: 96px;
+      height: 32px;
+      transform: translateX(-50%);
+      opacity: 0;
+      z-index: 27;
+      transition: opacity .14s ease;
+      pointer-events: none;
+    }
+
+    .soil-crack::before,
+    .soil-crack::after {
+      content: "";
+      position: absolute;
+      top: 9px;
+      height: 4px;
+      width: 45px;
+      background: rgba(63,31,12,.78);
+      border-radius: 999px;
+    }
+
+    .soil-crack::before { left: 4px; transform: rotate(22deg); }
+    .soil-crack::after { right: 4px; transform: rotate(-20deg); }
+
+    .fallen-leaf {
+      position: absolute;
+      width: 54px;
+      height: 27px;
+      background: #b88b45;
+      border-radius: 80% 20% 80% 20%;
+      opacity: 0;
+      z-index: 3;
+      transition: opacity .18s ease, transform .18s ease, background .18s ease, filter .18s ease;
+    }
+
+    .fallen-leaf.f1 { left: 84px; bottom: 48px; transform: rotate(-24deg); }
+    .fallen-leaf.f2 { right: 78px; bottom: 38px; transform: scaleX(-1) rotate(-18deg); }
+    .fallen-leaf.f3 { left: 132px; bottom: 22px; width: 44px; height: 23px; transform: rotate(18deg); }
+
+    .raindrop {
+      position: absolute;
+      width: 14px;
+      height: 22px;
+      background: #54b7ff;
+      border-radius: 999px 999px 999px 0;
+      opacity: 0;
+      transform: rotate(45deg);
+      animation: fall 1.2s linear infinite;
+      z-index: 30;
+    }
+
+    .drop1 { left: 190px; top: 122px; animation-delay: 0s; }
+    .drop2 { left: 232px; top: 94px; animation-delay: .25s; }
+    .drop3 { right: 214px; top: 112px; animation-delay: .5s; }
+    .drop4 { right: 258px; top: 86px; animation-delay: .8s; }
+
+    @keyframes fall {
+      from { transform: translateY(0) rotate(45deg); }
+      to { transform: translateY(92px) rotate(45deg); }
+    }
+
+    .heat-wave,
+    .cold-spark {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0;
+      z-index: 30;
+      transition: opacity .14s ease;
+    }
+
+    .heat-wave.one { right: 154px; bottom: 256px; }
+    .heat-wave.two { left: 154px; bottom: 278px; }
+    .cold-spark.one { left: 142px; bottom: 286px; }
+    .cold-spark.two { right: 132px; bottom: 264px; }
+
+    .message {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 22px;
+      background: #fff8d6;
+      border: 2px solid rgba(245,158,11,.2);
+      min-height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      line-height: 1.25;
+    }
+
+    .mini-status {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      background: #f9fcff;
+      border: 2px solid rgba(84,183,255,.14);
+      color: var(--muted);
+      font-weight: bold;
+      line-height: 1.35;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      font-size: .93rem;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 9px 8px;
+      border-bottom: 1px solid rgba(33,64,90,.12);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #e8f7ff;
+      color: #24527a;
+    }
+
+    .table-wrap {
+      max-height: 330px;
+      overflow: auto;
+      border-radius: 18px;
+      border: 1px solid rgba(33,64,90,.1);
+    }
+
+    .empty {
+      padding: 14px;
+      background: #f9fcff;
+      border-radius: 18px;
+      color: var(--muted);
+      font-weight: bold;
+      text-align: center;
+    }
+
+    footer {
+      width: min(1180px, 94vw);
+      margin: 0 auto 30px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: bold;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 1180px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+
+      .garden-card {
+        order: -1;
+      }
+
+      .garden {
+        height: 640px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .garden {
+        height: 585px;
+      }
+
+      .cloud.two {
+        display: none;
+      }
+
+      .flower-area {
+        transform: translateX(-50%) scale(.86);
+      }
+
+      .range-labels {
+        font-size: .66rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🌼 Help the Flower Grow!</h1>
+    <p>Start with a seed. Choose light, water, warmth, and soil. Watch what kind of plant grows.</p>
+  </header>
+
+  <section class="learning">
+    <strong>Big idea:</strong> Plants grow best with balance — not too little and not too much.
+  </section>
+
+  <main class="main">
+    <section class="card">
+      <h2>1. Make a guess</h2>
+      <p class="short">Move the sliders. Then press <strong>Grow!</strong></p>
+
+      <label for="prediction">What do you think will happen?</label>
+      <textarea id="prediction" placeholder="I think the seed will..."></textarea>
+
+      <div class="slider-box">
+        <div class="slider-head">
+          <span class="slider-title">☀️ Light</span>
+          <span class="slider-value" id="lightValue">Just right</span>
+        </div>
+        <input id="lightSlider" type="range" min="0" max="100" value="50" step="1" />
+        <div class="range-labels">
+          <span>very dark</span><span>shady</span><span>just right</span><span>bright</span><span>scorching</span>
+        </div>
+      </div>
+
+      <div class="slider-box">
+        <div class="slider-head">
+          <span class="slider-title">💧 Water</span>
+          <span class="slider-value" id="waterValue">Just right</span>
+        </div>
+        <input id="waterSlider" type="range" min="0" max="100" value="50" step="1" />
+        <div class="range-labels">
+          <span>bone dry</span><span>dry</span><span>just right</span><span>very wet</span><span>flooded</span>
+        </div>
+      </div>
+
+      <div class="slider-box">
+        <div class="slider-head">
+          <span class="slider-title">🌡️ Warmth</span>
+          <span class="slider-value" id="warmthValue">Warm</span>
+        </div>
+        <input id="warmthSlider" type="range" min="0" max="100" value="50" step="1" />
+        <div class="range-labels">
+          <span>freezing</span><span>cold</span><span>warm</span><span>hot</span><span>scorching</span>
+        </div>
+      </div>
+
+      <div class="slider-box">
+        <div class="slider-head">
+          <span class="slider-title">🌱 Soil</span>
+          <span class="slider-value" id="soilValue">Good soil</span>
+        </div>
+        <input id="soilSlider" type="range" min="0" max="100" value="55" step="1" />
+        <div class="range-labels">
+          <span>very poor</span><span>poor</span><span>good</span><span>rich</span><span>too rich</span>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button id="growBtn" class="grow-btn">🌱 Grow!</button>
+        <button id="resetBtn" class="reset-btn">🔄 Start again</button>
+      </div>
+    </section>
+
+    <section class="card garden-card">
+      <div class="garden-top">
+        <strong>Garden</strong>
+        <span class="badge stage" id="stageBadge">Seed</span>
+        <span class="badge" id="scoreBadge">Growth: 100%</span>
+        <span class="badge" id="dayBadge">Day 0</span>
+      </div>
+
+      <div class="garden" id="garden">
+        <div class="cloud one"></div>
+        <div class="cloud two"></div>
+        <div class="weather-note" id="weatherNote">Ready to grow!</div>
+        <div class="countdown-note" id="countdownNote">Press Grow!</div>
+
+        <div class="raindrop drop1"></div>
+        <div class="raindrop drop2"></div>
+        <div class="raindrop drop3"></div>
+        <div class="raindrop drop4"></div>
+
+        <div class="heat-wave one">🔥</div>
+        <div class="heat-wave two">☀️</div>
+        <div class="cold-spark one">❄️</div>
+        <div class="cold-spark two">🥶</div>
+
+        <div class="puddle" id="puddle"></div>
+
+        <div class="flower-area">
+          <div class="seed" id="seed"></div>
+
+          <div class="plant-group" id="plantGroup">
+            <div class="stem" id="stem"></div>
+
+            <div class="leaf left" id="leaf1"></div>
+            <div class="leaf right" id="leaf2"></div>
+            <div class="leaf left" id="leaf3"></div>
+            <div class="leaf right" id="leaf4"></div>
+            <div class="leaf left" id="leaf5"></div>
+            <div class="leaf right" id="leaf6"></div>
+
+            <div class="flower-head" id="flowerHead">
+              <div class="petal p1"></div>
+              <div class="petal p2"></div>
+              <div class="petal p3"></div>
+              <div class="petal p4"></div>
+              <div class="petal p5"></div>
+              <div class="petal p6"></div>
+
+              <div class="scorch-spot s1"></div>
+              <div class="scorch-spot s2"></div>
+              <div class="scorch-spot s3"></div>
+
+              <div class="sad-drop d1"></div>
+              <div class="sad-drop d2"></div>
+
+              <div class="face">
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="mouth" id="mouth"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fallen-leaf f1"></div>
+          <div class="fallen-leaf f2"></div>
+          <div class="fallen-leaf f3"></div>
+
+          <div class="soil" id="soil"></div>
+          <div class="soil-crack" id="soilCrack"></div>
+          <div class="pot"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Watch and record</h2>
+      <div class="message" id="message">Start with a seed. Press Grow!</div>
+      <div class="mini-status" id="miniStatus">Light, water, warmth, and soil are balanced.</div>
+
+      <h2 style="margin-top:20px;">My observations</h2>
+      <div class="table-wrap" id="tableWrap">
+        <div class="empty">No days yet. Start from a seed!</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Teacher note: This is a simplified model. Children can see that balanced conditions produce healthy growth, while extremes limit growth and cause visible stress.
+  </footer>
+
+  <script>
+    // ------------------------------------------------------------
+    // Elements
+    // ------------------------------------------------------------
+    const lightSlider = document.getElementById("lightSlider");
+    const waterSlider = document.getElementById("waterSlider");
+    const warmthSlider = document.getElementById("warmthSlider");
+    const soilSlider = document.getElementById("soilSlider");
+
+    const lightValue = document.getElementById("lightValue");
+    const waterValue = document.getElementById("waterValue");
+    const warmthValue = document.getElementById("warmthValue");
+    const soilValue = document.getElementById("soilValue");
+
+    const growBtn = document.getElementById("growBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const dayBadge = document.getElementById("dayBadge");
+    const stageBadge = document.getElementById("stageBadge");
+    const scoreBadge = document.getElementById("scoreBadge");
+    const weatherNote = document.getElementById("weatherNote");
+    const countdownNote = document.getElementById("countdownNote");
+    const message = document.getElementById("message");
+    const miniStatus = document.getElementById("miniStatus");
+    const tableWrap = document.getElementById("tableWrap");
+
+    const garden = document.getElementById("garden");
+    const plantGroup = document.getElementById("plantGroup");
+    const stem = document.getElementById("stem");
+    const flowerHead = document.getElementById("flowerHead");
+    const mouth = document.getElementById("mouth");
+    const puddle = document.getElementById("puddle");
+    const seed = document.getElementById("seed");
+    const soil = document.getElementById("soil");
+    const soilCrack = document.getElementById("soilCrack");
+
+    const leaves = [
+      document.getElementById("leaf1"),
+      document.getElementById("leaf2"),
+      document.getElementById("leaf3"),
+      document.getElementById("leaf4"),
+      document.getElementById("leaf5"),
+      document.getElementById("leaf6")
+    ];
+
+    const fallenLeaves = document.querySelectorAll(".fallen-leaf");
+    const petals = document.querySelectorAll(".petal");
+    const scorchSpots = document.querySelectorAll(".scorch-spot");
+    const sadDrops = document.querySelectorAll(".sad-drop");
+    const raindrops = document.querySelectorAll(".raindrop");
+    const heatWaves = document.querySelectorAll(".heat-wave");
+    const coldSparks = document.querySelectorAll(".cold-spark");
+
+    let day = 0;
+    let growth = 0;
+    let observations = [];
+    let isAnimating = false;
+    let animationId = null;
+    let growStartTime = 0;
+    const growDuration = 6000;
+
+    // ------------------------------------------------------------
+    // Model helpers
+    // ------------------------------------------------------------
+    function value(slider) {
+      return Number(slider.value);
+    }
+
+    function band(v, labels) {
+      if (v < 20) return labels[0];
+      if (v < 40) return labels[1];
+      if (v <= 60) return labels[2];
+      if (v <= 80) return labels[3];
+      return labels[4];
+    }
+
+    function describeLight() {
+      return band(value(lightSlider), ["Very dark", "Shady", "Just right", "Bright", "Scorching"]);
+    }
+
+    function describeWater() {
+      return band(value(waterSlider), ["Bone dry", "Dry", "Just right", "Very wet", "Flooded"]);
+    }
+
+    function describeWarmth() {
+      return band(value(warmthSlider), ["Freezing", "Cold", "Warm", "Hot", "Scorching"]);
+    }
+
+    function describeSoil() {
+      return band(value(soilSlider), ["Very poor", "Poor", "Good soil", "Rich soil", "Too rich"]);
+    }
+
+    function scoreFromIdeal(v, ideal, goodWidth = 18, maxDistance = 55) {
+      const distance = Math.abs(v - ideal);
+      if (distance <= goodWidth) return 1;
+      return Math.max(0, 1 - ((distance - goodWidth) / (maxDistance - goodWidth)));
+    }
+
+    function conditionDetails() {
+      const light = value(lightSlider);
+      const water = value(waterSlider);
+      const warmth = value(warmthSlider);
+      const soilQ = value(soilSlider);
+
+      const lightScore = scoreFromIdeal(light, 50, 14, 55);
+      const waterScore = scoreFromIdeal(water, 50, 13, 55);
+      const warmthScore = scoreFromIdeal(warmth, 50, 14, 55);
+      const soilScore = scoreFromIdeal(soilQ, 60, 20, 60);
+
+      // Multiplication means one very bad variable can strongly limit growth.
+      const overallGrowthScore = lightScore * waterScore * warmthScore * soilScore;
+
+      const lowLight = light < 50 ? (50 - light) / 50 : 0;
+      const highLight = light > 50 ? (light - 50) / 50 : 0;
+      const dry = water < 50 ? (50 - water) / 50 : 0;
+      const wet = water > 50 ? (water - 50) / 50 : 0;
+      const cold = warmth < 50 ? (50 - warmth) / 50 : 0;
+      const hot = warmth > 50 ? (warmth - 50) / 50 : 0;
+      const poorSoil = soilQ < 55 ? (55 - soilQ) / 55 : 0;
+      const richSoil = soilQ > 60 ? Math.min(1, (soilQ - 60) / 40) : 0;
+      const tooRichSoil = soilQ > 80 ? (soilQ - 80) / 20 : 0;
+
+      const stress = Math.max(0, 1 - overallGrowthScore);
+      const stresses = [
+        ["dry", dry],
+        ["wet", wet],
+        ["lowLight", lowLight],
+        ["highLight", highLight],
+        ["cold", cold],
+        ["hot", hot],
+        ["poorSoil", poorSoil],
+        ["tooRichSoil", tooRichSoil]
+      ];
+
+      let main = "balanced";
+      let mainAmount = 0;
+
+      stresses.forEach(([name, amount]) => {
+        if (amount > mainAmount) {
+          main = name;
+          mainAmount = amount;
+        }
+      });
+
+      return {
+        light, water, warmth, soilQ,
+        lightScore, waterScore, warmthScore, soilScore, overallGrowthScore,
+        lowLight, highLight, dry, wet, cold, hot, poorSoil, richSoil, tooRichSoil,
+        stress, main, mainAmount
+      };
+    }
+
+    function finalGrowthForConditions(d) {
+      // This decides how far the animation is allowed to grow.
+      const score = d.overallGrowthScore;
+
+      if (score >= 0.85) return 1.00;       // Tall flowering plant
+      if (score >= 0.65) return 0.78;       // Medium plant, flower or bud
+      if (score >= 0.45) return 0.58;       // Leafy plant, no full flower
+      if (score >= 0.25) return 0.36;       // Weak sprout / small plant
+      return 0.16;                          // Barely sprouts
+    }
+
+    function feedback(d = conditionDetails()) {
+      const severe = d.mainAmount > 0.78;
+      const moderate = d.mainAmount > 0.45;
+
+      if (d.main === "dry") {
+        return {
+          text: severe ? "Bone dry! The plant cannot get enough water." : moderate ? "Dry! The leaves start to droop." : "A little dry.",
+          weather: severe ? "Bone dry soil" : "Dry soil"
+        };
+      }
+
+      if (d.main === "wet") {
+        return {
+          text: severe ? "Flooded! The roots cannot breathe." : moderate ? "Very wet! The roots need air." : "A little wet.",
+          weather: severe ? "Flooded roots" : "Very wet soil"
+        };
+      }
+
+      if (d.main === "lowLight") {
+        return {
+          text: severe ? "Too dark! The plant cannot make enough food." : moderate ? "Shady! The plant grows slowly." : "A little shady.",
+          weather: severe ? "Very dark" : "Needs light"
+        };
+      }
+
+      if (d.main === "highLight") {
+        return {
+          text: severe ? "Scorching light! The plant is burning." : moderate ? "Very bright! The plant looks tired." : "Bright light.",
+          weather: severe ? "Scorching light" : "Very bright"
+        };
+      }
+
+      if (d.main === "cold") {
+        return {
+          text: severe ? "Freezing! Growth almost stops." : moderate ? "Cold! The plant grows slowly." : "A little cold.",
+          weather: severe ? "Freezing" : "Cold"
+        };
+      }
+
+      if (d.main === "hot") {
+        return {
+          text: severe ? "Scorching heat! The plant dries and burns." : moderate ? "Hot! The plant is getting tired." : "A little hot.",
+          weather: severe ? "Scorching heat" : "Hot"
+        };
+      }
+
+      if (d.main === "poorSoil") {
+        return {
+          text: severe ? "Very poor soil! The plant does not get enough nutrients." : moderate ? "Poor soil! Growth is weak." : "Soil is a little poor.",
+          weather: severe ? "Very poor soil" : "Poor soil"
+        };
+      }
+
+      if (d.main === "tooRichSoil") {
+        return {
+          text: severe ? "Too rich! Too much can hurt the plant." : moderate ? "Very rich soil. The plant is a bit stressed." : "Rich soil.",
+          weather: severe ? "Too rich soil" : "Rich soil"
+        };
+      }
+
+      return {
+        text: "Great balance! Your flower grew strong.",
+        weather: "Happy plant!"
+      };
+    }
+
+    function stageName(g = growth) {
+      if (g < 0.14) return "Seed";
+      if (g < 0.36) return "Sprout";
+      if (g < 0.58) return "Young plant";
+      if (g < 0.72) return "Leafy plant";
+      if (g < 0.86) return "Bud / small flower";
+      return "Flower";
+    }
+
+    // ------------------------------------------------------------
+    // Animation
+    // ------------------------------------------------------------
+    function startGrowAnimation() {
+      if (isAnimating) return;
+
+      isAnimating = true;
+      growBtn.disabled = true;
+      growStartTime = performance.now();
+      growth = 0;
+      day += 1;
+
+      dayBadge.textContent = "Day " + day;
+      message.textContent = "Watch carefully...";
+      animationId = requestAnimationFrame(animateGrowth);
+    }
+
+    function animateGrowth(now) {
+      const elapsed = now - growStartTime;
+      const progress = Math.min(1, elapsed / growDuration);
+      const d = conditionDetails();
+      const maxGrowth = finalGrowthForConditions(d);
+
+      // Smooth growth curve, limited by the selected conditions.
+      const eased = 1 - Math.pow(1 - progress, 2.25);
+      growth = eased * maxGrowth;
+
+      updateScene(true);
+
+      const secondsLeft = Math.max(0, Math.ceil((growDuration - elapsed) / 1000));
+      countdownNote.textContent = secondsLeft > 0 ? "Growing... " + secondsLeft : "Done!";
+
+      if (progress < 1) {
+        animationId = requestAnimationFrame(animateGrowth);
+      } else {
+        finishGrowAnimation();
+      }
+    }
+
+    function finishGrowAnimation() {
+      isAnimating = false;
+      growBtn.disabled = false;
+
+      const d = conditionDetails();
+      const f = feedback(d);
+
+      updateScene(false);
+      message.textContent = f.text;
+      countdownNote.textContent = stageName();
+
+      observations.push({
+        day,
+        stage: stageName(),
+        light: describeLight(),
+        water: describeWater(),
+        warmth: describeWarmth(),
+        soil: describeSoil(),
+        result: f.text
+      });
+
+      updateTable();
+    }
+
+    // ------------------------------------------------------------
+    // Visual model
+    // ------------------------------------------------------------
+    function updateScene(duringAnimation = false) {
+      const d = conditionDetails();
+      const f = feedback(d);
+
+      lightValue.textContent = describeLight();
+      waterValue.textContent = describeWater();
+      warmthValue.textContent = describeWarmth();
+      soilValue.textContent = describeSoil();
+
+      stageBadge.textContent = stageName();
+      scoreBadge.textContent = "Growth: " + Math.round(d.overallGrowthScore * 100) + "%";
+      weatherNote.textContent = duringAnimation ? "Taking in your sliders..." : f.weather;
+      miniStatus.textContent = f.text;
+
+      const maxGrowth = finalGrowthForConditions(d);
+
+      // Stem starts at the centre of the pot and grows up from the soil line.
+      const stemHeight = growth < 0.10 ? 0 : 20 + growth * 285;
+      stem.style.height = stemHeight + "px";
+
+      // Flower head slightly overlaps the stem top so there is no gap.
+      const flowerVisible = growth >= 0.70 && maxGrowth >= 0.72;
+      const flowerScale = flowerVisible ? Math.min(1.15, 0.22 + (growth - 0.70) * 2.65) : 0;
+      const flowerBottom = 74 + stemHeight - 54;
+      flowerHead.style.bottom = flowerBottom + "px";
+      flowerHead.style.opacity = flowerVisible ? "1" : "0";
+
+      // Seed fades as the sprout appears.
+      seed.style.opacity = growth < 0.16 ? "1" : "0";
+      seed.style.transform = growth < 0.16
+        ? "translateX(-50%) rotate(-12deg) scale(1)"
+        : "translateX(-50%) rotate(-12deg) scale(0.35)";
+
+      resetVisuals();
+      applyCoreGrowthVisuals(d, stemHeight, flowerScale, flowerVisible);
+      applyStressVisuals(d, flowerScale, flowerVisible);
+    }
+
+    function resetVisuals() {
+      garden.style.filter = "none";
+      plantGroup.style.transform = "rotate(0deg)";
+      plantGroup.style.filter = "none";
+      stem.style.filter = "none";
+      flowerHead.style.filter = "none";
+      flowerHead.style.transform = "translateX(-50%) rotate(0deg) scale(0)";
+      flowerHead.style.opacity = "0";
+      puddle.style.opacity = "0";
+      puddle.style.width = "220px";
+      soilCrack.style.opacity = "0";
+
+      raindrops.forEach(drop => drop.style.opacity = "0");
+      heatWaves.forEach(wave => wave.style.opacity = "0");
+      coldSparks.forEach(spark => spark.style.opacity = "0");
+
+      scorchSpots.forEach(spot => {
+        spot.style.opacity = "0";
+        spot.style.transform = "scale(0.4)";
+      });
+
+      sadDrops.forEach(drop => drop.style.opacity = "0");
+      fallenLeaves.forEach(leaf => leaf.style.opacity = "0");
+
+      petals.forEach((petal, index) => {
+        petal.style.background = index % 2 === 0 ? "#ff75b7" : "#ff9fd0";
+        petal.style.opacity = "1";
+        petal.style.filter = "none";
+      });
+
+      setHappyMouth();
+    }
+
+    function applyCoreGrowthVisuals(d, stemHeight, flowerScale, flowerVisible) {
+      const stemBase = stemColour(d);
+      const stemLight = stemHighlightColour(d);
+      const leaf = leafColour(d);
+
+      stem.style.background = "linear-gradient(90deg, " + stemBase + ", " + stemLight + ")";
+      soil.style.background = soilColour(d);
+      flowerHead.style.transform = "translateX(-50%) rotate(0deg) scale(" + flowerScale + ")";
+      flowerHead.style.opacity = flowerVisible ? "1" : "0";
+
+      layoutLeaves(d, stemHeight, leaf);
+    }
+
+    function layoutLeaves(d, stemHeight, leafColourValue) {
+      // Leaves are attached to fixed points on the stem inside plantGroup.
+      // Since plantGroup bends as one unit, the leaves remain attached.
+      const leafData = [
+        { side: "left",  level: 0.25, appear: 0.24, angle: -42, size: 0.76 },
+        { side: "right", level: 0.36, appear: 0.30, angle: 42,  size: 0.82 },
+        { side: "left",  level: 0.48, appear: 0.40, angle: -36, size: 0.92 },
+        { side: "right", level: 0.60, appear: 0.50, angle: 36,  size: 0.98 },
+        { side: "left",  level: 0.72, appear: 0.60, angle: -30, size: 0.88 },
+        { side: "right", level: 0.82, appear: 0.70, angle: 30,  size: 0.80 }
+      ];
+
+      const strongStress = Math.max(d.dry, d.wet, d.hot, d.highLight, d.poorSoil);
+      const droop = Math.min(94, d.stress * 60 + strongStress * 38 + d.cold * 12);
+      const saturation = Math.max(0.25, 1 - d.stress * 0.75);
+      const brightness = Math.max(0.58, 1 - d.dry * 0.12 - d.hot * 0.18 - d.highLight * 0.12);
+
+      leaves.forEach((leaf, index) => {
+        const info = leafData[index];
+        const visibleByGrowth = growth >= info.appear && stemHeight > 32;
+
+        // Severe conditions can cause upper leaves to fall.
+        const lost =
+          (strongStress > 0.78 && index >= 4 && growth > 0.55) ||
+          (strongStress > 0.90 && index >= 2 && growth > 0.45) ||
+          (d.dry > 0.95 && index >= 1 && growth > 0.35);
+
+        const visible = visibleByGrowth && !lost;
+        const y = 74 + stemHeight * info.level;
+        const x = 175;
+
+        const angle = info.side === "left"
+          ? info.angle - droop
+          : info.angle + droop;
+
+        leaf.style.opacity = visible ? Math.max(0.36, 1 - d.stress * 0.48) : "0";
+        leaf.style.left = x + "px";
+        leaf.style.bottom = y + "px";
+        leaf.style.width = (74 * info.size) + "px";
+        leaf.style.height = (38 * info.size) + "px";
+        leaf.style.background = leafColourValue;
+        leaf.style.filter = "saturate(" + saturation + ") brightness(" + brightness + ")";
+        leaf.style.border = d.stress > 0.58 ? "2px solid rgba(92,64,32,0.26)" : "0";
+
+        if (info.side === "left") {
+          leaf.style.transformOrigin = "100% 50%";
+          leaf.style.transform = "translateX(-100%) rotate(" + angle + "deg)";
+        } else {
+          leaf.style.transformOrigin = "0% 50%";
+          leaf.style.transform = "rotate(" + angle + "deg)";
+        }
+      });
+
+      updateFallenLeaves(d, leafColourValue);
+    }
+
+    function applyStressVisuals(d, flowerScale, flowerVisible) {
+      const severeHeat = Math.max(d.hot, d.highLight);
+      const severeWater = Math.max(d.dry, d.wet);
+      const bendStress = Math.max(severeWater, severeHeat, d.poorSoil * 0.65);
+      const bendDirection = d.wet > d.dry && d.wet > severeHeat ? -1 : 1;
+      const bendAmount = Math.min(30, bendStress * 31 + d.cold * 8);
+
+      // Background and weather effects.
+      if (d.lowLight > 0.18) {
+        garden.style.filter = "brightness(" + (1 - d.lowLight * 0.22) + ") saturate(" + (1 - d.lowLight * 0.28) + ")";
+        petals.forEach(petal => {
+          petal.style.background = "#ffc2dd";
+          petal.style.opacity = String(1 - d.lowLight * 0.36);
+        });
+      }
+
+      if (d.cold > 0.18) {
+        coldSparks.forEach(spark => spark.style.opacity = String(Math.min(0.95, d.cold * 1.2)));
+        garden.style.filter = "hue-rotate(" + (d.cold * 22) + "deg) brightness(" + (1 - d.cold * 0.12) + ") saturate(" + (1 - d.cold * 0.20) + ")";
+        petals.forEach(petal => {
+          petal.style.background = "#b8e7ff";
+          petal.style.opacity = String(1 - d.cold * 0.26);
+        });
+      }
+
+      if (d.dry > 0.18) {
+        soilCrack.style.opacity = String(Math.min(1, d.dry * 1.35));
+        if (d.dry > 0.50) {
+          petals.forEach(petal => {
+            petal.style.background = "#d9a066";
+            petal.style.opacity = String(1 - d.dry * 0.38);
+          });
+          sadDrops.forEach(drop => drop.style.opacity = flowerVisible ? String(d.dry * 0.55) : "0");
+        }
+      }
+
+      if (d.wet > 0.18) {
+        puddle.style.opacity = String(Math.min(1, d.wet * 1.30));
+        puddle.style.width = (190 + d.wet * 90) + "px";
+        raindrops.forEach(drop => drop.style.opacity = String(Math.min(0.95, d.wet * 1.25)));
+        if (d.wet > 0.50) {
+          petals.forEach(petal => {
+            petal.style.background = "#b7a6ff";
+            petal.style.opacity = String(1 - d.wet * 0.30);
+          });
+          sadDrops.forEach(drop => drop.style.opacity = flowerVisible ? String(d.wet * 0.90) : "0");
+        }
+      }
+
+      if (severeHeat > 0.18) {
+        heatWaves.forEach(wave => wave.style.opacity = String(Math.min(0.95, severeHeat * 1.2)));
+        garden.style.filter = "brightness(" + (1 + severeHeat * 0.16) + ") saturate(" + (1 + severeHeat * 0.18) + ") sepia(" + (severeHeat * 0.12) + ")";
+        petals.forEach((petal, index) => {
+          petal.style.background = severeHeat > 0.62
+            ? (index % 2 === 0 ? "#c76b3b" : "#8f4a2d")
+            : "#ff8f70";
+          petal.style.opacity = String(1 - severeHeat * 0.42);
+          petal.style.filter = "saturate(" + (1 - severeHeat * 0.25) + ")";
+        });
+        scorchSpots.forEach(spot => {
+          spot.style.opacity = flowerVisible ? String(Math.min(1, Math.max(0, (severeHeat - 0.35) * 1.75))) : "0";
+          spot.style.transform = "scale(" + (0.55 + severeHeat * 0.65) + ")";
+        });
+      }
+
+      if (d.poorSoil > 0.30) {
+        soilCrack.style.opacity = String(Math.max(Number(soilCrack.style.opacity) || 0, d.poorSoil * 0.65));
+      }
+
+      if (d.tooRichSoil > 0.55) {
+        petals.forEach(petal => {
+          petal.style.opacity = String(Math.min(Number(petal.style.opacity) || 1, 1 - d.tooRichSoil * 0.20));
+        });
+      }
+
+      // Whole plant bends from the centre base. Leaves and flower move with it.
+      if (bendStress > 0.22 || d.cold > 0.55) {
+        plantGroup.style.transform = "rotate(" + (bendDirection * bendAmount) + "deg)";
+        flowerHead.style.transform = "translateX(-50%) rotate(" + (bendDirection * Math.min(10, bendAmount / 2)) + "deg) scale(" + (flowerScale * (1 - bendStress * 0.20 - d.cold * 0.08)) + ")";
+        setSadMouth();
+      }
+
+      if (d.stress < 0.15 && growth >= 0.86) {
+        weatherNote.textContent = "Happy tall flower!";
+      } else {
+        weatherNote.textContent = feedback(d).weather;
+      }
+    }
+
+    function updateFallenLeaves(d, colour) {
+      const leafFallStress = Math.max(d.dry, d.wet, d.hot, d.highLight, d.poorSoil);
+      fallenLeaves.forEach((leaf, index) => {
+        const threshold = [0.78, 0.88, 0.94][index];
+        const visible = leafFallStress > threshold && growth > 0.48;
+        leaf.style.opacity = visible ? String(Math.min(1, (leafFallStress - threshold) * 7)) : "0";
+        leaf.style.background = colour;
+
+        if (d.wet > 0.75) {
+          leaf.style.filter = "saturate(0.55) brightness(0.82)";
+        } else if (d.hot > 0.75 || d.highLight > 0.75) {
+          leaf.style.filter = "saturate(0.45) brightness(0.75)";
+        } else if (d.dry > 0.75) {
+          leaf.style.filter = "saturate(0.55) brightness(0.86)";
+        } else {
+          leaf.style.filter = "none";
+        }
+      });
+    }
+
+    // ------------------------------------------------------------
+    // Colour helpers
+    // ------------------------------------------------------------
+    function leafColour(d) {
+      if (d.hot > 0.55 || d.highLight > 0.65) return mixColour("#48c774", "#a86f35", Math.max(d.hot, d.highLight));
+      if (d.dry > 0.45) return mixColour("#48c774", "#b88b45", d.dry);
+      if (d.wet > 0.45) return mixColour("#48c774", "#5f8f6a", d.wet);
+      if (d.lowLight > 0.35) return mixColour("#48c774", "#c7d889", d.lowLight);
+      if (d.cold > 0.35) return mixColour("#48c774", "#7db8b3", d.cold);
+      if (d.poorSoil > 0.35) return mixColour("#48c774", "#b6a05b", d.poorSoil);
+      if (d.tooRichSoil > 0.55) return mixColour("#48c774", "#4e8c55", d.tooRichSoil);
+      return "#48c774";
+    }
+
+    function stemColour(d) {
+      if (d.hot > 0.55 || d.highLight > 0.65) return mixColour("#2fb85b", "#8a6a2f", Math.max(d.hot, d.highLight));
+      if (d.dry > 0.45) return mixColour("#2fb85b", "#9a7a39", d.dry);
+      if (d.wet > 0.45) return mixColour("#2fb85b", "#4f7f61", d.wet);
+      if (d.lowLight > 0.35) return mixColour("#2fb85b", "#a9c96f", d.lowLight);
+      if (d.cold > 0.35) return mixColour("#2fb85b", "#68aeb0", d.cold);
+      if (d.poorSoil > 0.35) return mixColour("#2fb85b", "#9b8c48", d.poorSoil);
+      if (d.tooRichSoil > 0.55) return mixColour("#2fb85b", "#3f7f45", d.tooRichSoil);
+      return "#2fb85b";
+    }
+
+    function stemHighlightColour(d) {
+      if (d.hot > 0.55 || d.highLight > 0.65) return mixColour("#7be279", "#b7894a", Math.max(d.hot, d.highLight));
+      if (d.dry > 0.45) return mixColour("#7be279", "#c2a65a", d.dry);
+      if (d.wet > 0.45) return mixColour("#7be279", "#77a987", d.wet);
+      if (d.lowLight > 0.35) return mixColour("#7be279", "#d7e69a", d.lowLight);
+      if (d.cold > 0.35) return mixColour("#7be279", "#99d5d4", d.cold);
+      if (d.poorSoil > 0.35) return mixColour("#7be279", "#c6b66a", d.poorSoil);
+      if (d.tooRichSoil > 0.55) return mixColour("#7be279", "#69a86d", d.tooRichSoil);
+      return "#7be279";
+    }
+
+    function soilColour(d) {
+      if (d.poorSoil > 0.35) return mixColour("#7b4a2a", "#b39b63", d.poorSoil);
+      if (d.tooRichSoil > 0.55) return mixColour("#7b4a2a", "#3f2a22", d.tooRichSoil);
+      if (d.wet > 0.45) return mixColour("#7b4a2a", "#4f392c", d.wet);
+      if (d.dry > 0.45) return mixColour("#7b4a2a", "#a06d34", d.dry);
+      return "#7b4a2a";
+    }
+
+    function mixColour(hex1, hex2, amount) {
+      const t = Math.max(0, Math.min(1, amount));
+      const a = hexToRgb(hex1);
+      const b = hexToRgb(hex2);
+      const r = Math.round(a.r + (b.r - a.r) * t);
+      const g = Math.round(a.g + (b.g - a.g) * t);
+      const bl = Math.round(a.b + (b.b - a.b) * t);
+      return "rgb(" + r + ", " + g + ", " + bl + ")";
+    }
+
+    function hexToRgb(hex) {
+      const clean = hex.replace("#", "");
+      return {
+        r: parseInt(clean.substring(0, 2), 16),
+        g: parseInt(clean.substring(2, 4), 16),
+        b: parseInt(clean.substring(4, 6), 16)
+      };
+    }
+
+    function setSadMouth() {
+      mouth.style.borderBottom = "0";
+      mouth.style.borderTop = "4px solid #3d2b1f";
+      mouth.style.top = "43px";
+      mouth.style.borderRadius = "999px 999px 0 0";
+    }
+
+    function setHappyMouth() {
+      mouth.style.borderTop = "0";
+      mouth.style.borderBottom = "4px solid #3d2b1f";
+      mouth.style.top = "38px";
+      mouth.style.borderRadius = "0 0 999px 999px";
+    }
+
+    // ------------------------------------------------------------
+    // Observation table
+    // ------------------------------------------------------------
+    function updateTable() {
+      if (observations.length === 0) {
+        tableWrap.innerHTML = '<div class="empty">No days yet. Start from a seed!</div>';
+        return;
+      }
+
+      tableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Stage</th>
+              <th>Light</th>
+              <th>Water</th>
+              <th>Warmth</th>
+              <th>Soil</th>
+              <th>What happened?</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${observations.map(row => `
+              <tr>
+                <td>${row.day}</td>
+                <td>${row.stage}</td>
+                <td>${row.light}</td>
+                <td>${row.water}</td>
+                <td>${row.warmth}</td>
+                <td>${row.soil}</td>
+                <td>${row.result}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function resetAll() {
+      if (animationId) cancelAnimationFrame(animationId);
+
+      day = 0;
+      growth = 0;
+      observations = [];
+      isAnimating = false;
+
+      lightSlider.value = 50;
+      waterSlider.value = 50;
+      warmthSlider.value = 50;
+      soilSlider.value = 55;
+      document.getElementById("prediction").value = "";
+
+      growBtn.disabled = false;
+      dayBadge.textContent = "Day 0";
+      countdownNote.textContent = "Press Grow!";
+      message.textContent = "Start with a seed. Press Grow!";
+
+      updateScene(false);
+      updateTable();
+    }
+
+    function handleSliderInput() {
+      if (!isAnimating) {
+        growth = 0;
+      }
+
+      updateScene(isAnimating);
+
+      if (isAnimating) {
+        message.textContent = feedback(conditionDetails()).text;
+      }
+    }
+
+    growBtn.addEventListener("click", startGrowAnimation);
+    resetBtn.addEventListener("click", resetAll);
+    [lightSlider, waterSlider, warmthSlider, soilSlider].forEach(slider => {
+      slider.addEventListener("input", handleSliderInput);
+    });
+
+    resetAll();
+  </script>
+</body>
+</html>

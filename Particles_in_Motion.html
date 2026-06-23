@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inside Matter: Particles in Motion</title>
+
+  <style>
+    :root {
+      --page-bg-1: #f0f9ff;
+      --page-bg-2: #e0f2fe;
+      --page-bg-3: #fefce8;
+      --card: #ffffff;
+      --card-soft: #f8fafc;
+      --text: #12304a;
+      --muted: #475569;
+      --blue: #0ea5e9;
+      --blue-dark: #0369a1;
+      --yellow: #f59e0b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --purple: #8b5cf6;
+      --line: rgba(15, 23, 42, 0.12);
+      --shadow: 0 14px 30px rgba(14, 116, 144, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Nunito", "Arial Rounded MT Bold", Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(14,165,233,0.18), transparent 34%),
+        radial-gradient(circle at top right, rgba(250,204,21,0.24), transparent 32%),
+        linear-gradient(180deg, var(--page-bg-1) 0%, var(--page-bg-2) 48%, var(--page-bg-3) 100%);
+      min-height: 100vh;
+    }
+
+    header {
+      width: min(1280px, 94vw);
+      margin: 0 auto;
+      padding: 24px 0 12px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      color: #0f2f48;
+      text-shadow: 0 3px 0 rgba(14,165,233,0.12);
+    }
+
+    header p {
+      max-width: 980px;
+      margin: 10px auto 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.5;
+    }
+
+    .learning-outcome {
+      width: min(1280px, 94vw);
+      margin: 0 auto 16px;
+      padding: 14px 18px;
+      border: 1px solid rgba(14,165,233,0.25);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.82);
+      line-height: 1.5;
+      box-shadow: var(--shadow);
+    }
+
+    .layout {
+      width: min(1500px, 96vw);
+      margin: 0 auto 26px;
+      display: grid;
+      grid-template-columns: 360px minmax(600px, 1fr) 380px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      color: #075985;
+      font-size: 1.35rem;
+    }
+
+    .card h3 {
+      margin: 20px 0 8px;
+      color: #0369a1;
+      font-size: 1.08rem;
+    }
+
+    .small-text {
+      color: var(--muted);
+      line-height: 1.48;
+      margin: 0 0 12px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: bold;
+      color: var(--text);
+    }
+
+    select, textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid rgba(15,23,42,0.16);
+      border-radius: 13px;
+      background: #f8fafc;
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+      line-height: 1.42;
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .slider-card {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 1px solid rgba(15,23,42,0.10);
+      border-radius: 16px;
+    }
+
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .slider-value {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #075985;
+      white-space: nowrap;
+      font-size: .92rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: .82rem;
+      margin-top: 2px;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #082f49;
+      background: #67e8f9;
+      transition: transform .12s ease, filter .12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    button.secondary {
+      background: #fcd34d;
+    }
+
+    button.purple {
+      background: #ddd6fe;
+      grid-column: 1 / -1;
+    }
+
+    .step-box {
+      margin-top: 14px;
+      padding: 13px;
+      border-radius: 16px;
+      background: #ecfeff;
+      border: 1px solid rgba(14,165,233,0.25);
+      color: #164e63;
+      line-height: 1.5;
+    }
+
+    .step-box strong {
+      color: #075985;
+    }
+
+    .sim-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .sim-top {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(224,242,254,0.92);
+    }
+
+    .sim-title small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-weight: normal;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 96px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid rgba(245,158,11,0.30);
+      font-weight: bold;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .badge.good {
+      background: #dcfce7;
+      color: #166534;
+      border-color: rgba(34,197,94,0.28);
+    }
+
+    .badge.hot {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: rgba(239,68,68,0.28);
+    }
+
+    .canvas-wrap {
+      background: #dbeafe;
+      padding: 14px;
+    }
+
+    #matterCanvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #e0f2fe 0%, #f8fafc 100%);
+      border: 1px solid rgba(15,23,42,0.16);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 12px 16px 16px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.65);
+      border-top: 1px solid var(--line);
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--blue);
+      display: inline-block;
+    }
+
+    .dot.pressure { background: var(--red); }
+    .dot.temp { background: var(--yellow); }
+
+    .data-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .data-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      background: rgba(241,245,249,0.9);
+      border: 1px solid rgba(15,23,42,0.09);
+    }
+
+    .data-item span:first-child {
+      color: var(--muted);
+    }
+
+    .data-item span:last-child {
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .gauge-wrap {
+      display: grid;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .gauge {
+      padding: 12px;
+      background: rgba(241,245,249,0.88);
+      border: 1px solid rgba(15,23,42,0.09);
+      border-radius: 16px;
+    }
+
+    .gauge-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .bar {
+      height: 18px;
+      background: rgba(15,23,42,0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      width: 40%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #38bdf8, #facc15, #fb7185);
+      transition: width .2s ease;
+    }
+
+    .fill.pressure {
+      background: linear-gradient(90deg, #86efac, #facc15, #fb7185);
+    }
+
+    #graphCanvas {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: rgba(248,250,252,0.94);
+      border: 1px solid rgba(15,23,42,0.12);
+      border-radius: 16px;
+      margin-top: 10px;
+    }
+
+    .explain {
+      margin-top: 14px;
+      padding: 13px;
+      border-radius: 16px;
+      background: rgba(224,242,254,0.95);
+      border: 1px solid rgba(14,165,233,0.25);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .trial-area {
+      margin-top: 8px;
+      max-height: 300px;
+      overflow: auto;
+      border-radius: 14px;
+    }
+
+    .trial-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+      background: #ffffff;
+      border: 1px solid rgba(15,23,42,0.1);
+    }
+
+    .trial-table caption {
+      caption-side: top;
+      text-align: left;
+      font-weight: bold;
+      color: #075985;
+      margin-bottom: 8px;
+    }
+
+    .trial-table th,
+    .trial-table td {
+      padding: 9px 8px;
+      border-bottom: 1px solid rgba(15,23,42,0.10);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .trial-table th {
+      color: #075985;
+      background: #e0f2fe;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .trial-table td {
+      color: #1f2937;
+    }
+
+    .reflection {
+      width: min(1280px, 94vw);
+      margin: 0 auto 22px;
+    }
+
+    .reflection ol {
+      color: var(--muted);
+      line-height: 1.45;
+      padding-left: 22px;
+      columns: 2;
+      column-gap: 36px;
+    }
+
+    .reflection li {
+      margin-bottom: 8px;
+      break-inside: avoid;
+    }
+
+    footer {
+      width: min(1200px, 94vw);
+      margin: 0 auto 30px;
+      color: var(--muted);
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    @media (max-width: 1260px) {
+      .layout {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .sim-card {
+        grid-column: 1 / -1;
+        order: -1;
+      }
+    }
+
+    @media (max-width: 850px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sim-card {
+        grid-column: auto;
+      }
+
+      .sim-top {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+      }
+
+      .badge {
+        width: 100%;
+      }
+
+      .control-row {
+        grid-template-columns: 1fr;
+      }
+
+      .reflection ol {
+        columns: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Inside Matter: Particles in Motion</h1>
+    <p>
+      Drag the sliders to explore instantly, or use Auto-run to heat or cool gradually. Watch matter change between solid, liquid, and gas.
+    </p>
+  </header>
+
+  <section class="learning-outcome">
+    <strong>Learning outcome:</strong> Students will explain how heating and cooling affect particle movement, particle spacing, changes of state, and pressure.
+  </section>
+
+  <main class="layout">
+    <section class="card">
+      <h2>1. Predict and set up</h2>
+      <p class="small-text">
+        Choose one variable to investigate. Change only one variable at a time so your test is fair.
+      </p>
+
+      <label for="question">Investigation question</label>
+      <input id="question" type="text" placeholder="Example: What happens to pressure when volume is smaller?" />
+
+      <label for="prediction">Prediction</label>
+      <textarea id="prediction" placeholder="I predict that... because..."></textarea>
+
+      <div class="slider-card">
+        <div class="slider-head">
+          <span>Temperature</span>
+          <span class="slider-value" id="temperatureLabel">Room temperature</span>
+        </div>
+        <input id="temperatureSlider" type="range" min="0" max="4" value="2" step="0.01" />
+        <div class="range-labels">
+          <span>very cold</span><span>room temp</span><span>very hot</span>
+        </div>
+      </div>
+
+      <div class="slider-card">
+        <div class="slider-head">
+          <span>Container volume</span>
+          <span class="slider-value" id="volumeLabel">Medium</span>
+        </div>
+        <input id="volumeSlider" type="range" min="0" max="2" value="1" step="0.01" />
+        <div class="range-labels">
+          <span>small</span><span>medium</span><span>large</span>
+        </div>
+      </div>
+
+      <div class="slider-card">
+        <div class="slider-head">
+          <span>Number of particles</span>
+          <span class="slider-value" id="particleLabel">Medium</span>
+        </div>
+        <input id="particleSlider" type="range" min="0" max="2" value="1" step="1" />
+        <div class="range-labels">
+          <span>few</span><span>medium</span><span>many</span>
+        </div>
+      </div>
+
+      <label for="substance">Substance type</label>
+      <select id="substance">
+        <option value="water" selected>Water</option>
+        <option value="oxygen">Oxygen</option>
+        <option value="wax">Wax</option>
+      </select>
+
+      <label for="heatAction">Action while running</label>
+      <select id="heatAction">
+        <option value="none">No automatic change</option>
+        <option value="heatSlow">Heat slowly</option>
+        <option value="heatFast">Heat quickly to evaporate/boil</option>
+        <option value="coolSlow">Cool slowly</option>
+        <option value="coolFast">Cool quickly</option>
+      </select>
+
+      <div class="button-grid">
+        <button id="playPause">Auto-run</button>
+        <button id="reset" class="secondary">Reset</button>
+        <button id="record" class="purple">Record Result</button>
+      </div>
+
+      <div class="step-box">
+        <strong>How to use it:</strong><br>
+        1. Write a prediction.<br>
+        2. Change one variable.<br>
+        3. Press Play and observe the particles.<br>
+        4. Press Record Result and compare trials.
+      </div>
+    </section>
+
+    <section class="card sim-card">
+      <div class="sim-top">
+        <div class="sim-title">
+          <strong>Particle chamber</strong>
+          <small>Observation window — particles transition as you move the sliders.</small>
+        </div>
+        <span id="stateBadge" class="badge">Liquid</span>
+        <span id="motionBadge" class="badge good">Medium motion</span>
+        <span id="pressureBadge" class="badge">Pressure: Medium</span>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="matterCanvas" width="880" height="560" aria-label="Animated particles in a container"></canvas>
+      </div>
+
+      <div class="legend">
+        <span><i class="dot"></i> Matter particles</span>
+        <span><i class="dot temp"></i> Temperature reading</span>
+        <span><i class="dot pressure"></i> Gas wall collisions = pressure</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Observe and verify</h2>
+
+      <div class="data-grid">
+        <div class="data-item"><span>Current state</span><span id="stateReadout">Liquid</span></div>
+        <div class="data-item"><span>Temperature</span><span id="tempReadout">Room temperature</span></div>
+        <div class="data-item"><span>Pressure</span><span id="pressureReadout">Medium</span></div>
+        <div class="data-item"><span>Volume</span><span id="volumeReadout">Medium</span></div>
+        <div class="data-item"><span>Particles</span><span id="countReadout">Medium</span></div>
+      </div>
+
+      <div class="gauge-wrap">
+        <div class="gauge">
+          <div class="gauge-label"><span>Thermometer</span><span id="thermoValue">50%</span></div>
+          <div class="bar"><div id="thermoFill" class="fill"></div></div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-label"><span>Pressure gauge</span><span id="pressureValue">50%</span></div>
+          <div class="bar"><div id="pressureFill" class="fill pressure"></div></div>
+        </div>
+      </div>
+
+      <h3>Graph: temperature and pressure over time</h3>
+      <canvas id="graphCanvas" width="360" height="190" aria-label="Graph of temperature and pressure over time"></canvas>
+
+      <div id="explanation" class="explain">
+        Matter is made of tiny particles. Press Play to see how particle movement changes.
+      </div>
+
+      <h3>3. Recorded trial results</h3>
+      <div id="trialsArea" class="trial-area small-text">No trials recorded yet.</div>
+    </section>
+  </main>
+
+  <section class="card reflection">
+    <h2>Reflection questions</h2>
+    <ol>
+      <li>What happened to the particles when the temperature increased?</li>
+      <li>What happened to the particles when the temperature decreased?</li>
+      <li>How were the particles different in a solid, liquid, and gas?</li>
+      <li>What happened to pressure when the container became smaller?</li>
+      <li>What happened to pressure when more particles were added?</li>
+      <li>Why is a particle simulation useful for understanding matter?</li>
+      <li>What evidence from the simulation supports your conclusion?</li>
+    </ol>
+  </section>
+
+  <footer>
+    <strong>Teacher note:</strong> This simulation is intentionally simplified. It is not a perfect molecular dynamics model. Its purpose is to help students link visible particle behaviour with scientific explanations: heating increases energy, cooling reduces energy, gases collide with container walls, and pressure increases when particles are hotter, more numerous, or squeezed into a smaller space.
+  </footer>
+
+  <script>
+    // ------------------------------------------------------------
+    // Interface elements
+    // ------------------------------------------------------------
+    const matterCanvas = document.getElementById("matterCanvas");
+    const ctx = matterCanvas.getContext("2d");
+    const graphCanvas = document.getElementById("graphCanvas");
+    const gctx = graphCanvas.getContext("2d");
+
+    const temperatureSlider = document.getElementById("temperatureSlider");
+    const volumeSlider = document.getElementById("volumeSlider");
+    const particleSlider = document.getElementById("particleSlider");
+    const substanceSelect = document.getElementById("substance");
+    const heatActionSelect = document.getElementById("heatAction");
+
+    const temperatureLabel = document.getElementById("temperatureLabel");
+    const volumeLabel = document.getElementById("volumeLabel");
+    const particleLabel = document.getElementById("particleLabel");
+
+    const playPauseBtn = document.getElementById("playPause");
+    const resetBtn = document.getElementById("reset");
+    const recordBtn = document.getElementById("record");
+
+    const stateBadge = document.getElementById("stateBadge");
+    const motionBadge = document.getElementById("motionBadge");
+    const pressureBadge = document.getElementById("pressureBadge");
+
+    const stateReadout = document.getElementById("stateReadout");
+    const tempReadout = document.getElementById("tempReadout");
+    const pressureReadout = document.getElementById("pressureReadout");
+    const volumeReadout = document.getElementById("volumeReadout");
+    const countReadout = document.getElementById("countReadout");
+
+    const thermoFill = document.getElementById("thermoFill");
+    const pressureFill = document.getElementById("pressureFill");
+    const thermoValue = document.getElementById("thermoValue");
+    const pressureValue = document.getElementById("pressureValue");
+    const explanation = document.getElementById("explanation");
+    const trialsArea = document.getElementById("trialsArea");
+
+    const questionInput = document.getElementById("question");
+    const predictionInput = document.getElementById("prediction");
+
+    // ------------------------------------------------------------
+    // Classroom-friendly model settings
+    // These values are chosen for teaching clarity, not exact real-world accuracy.
+    // ------------------------------------------------------------
+    const substanceData = {
+      water: {
+        name: "Water",
+        solidMax: 0.9,
+        liquidMax: 2.7,
+        colour: "#0ea5e9",
+        solidName: "Solid ice",
+        note: "Water is useful for seeing solid, liquid, and gas behaviour."
+      },
+      oxygen: {
+        name: "Oxygen",
+        solidMax: 0.2,
+        liquidMax: 0.9,
+        colour: "#8b5cf6",
+        solidName: "Solid oxygen",
+        note: "Oxygen is normally a gas at room temperature."
+      },
+      wax: {
+        name: "Wax",
+        solidMax: 2.1,
+        liquidMax: 3.7,
+        colour: "#f59e0b",
+        solidName: "Solid wax",
+        note: "Wax usually needs heating before it melts."
+      }
+    };
+
+    let particles = [];
+    let running = false;
+    let tempLevel = 2;
+    let graphData = [];
+    let trials = [];
+    let collisionFlashes = [];
+    let frameCounter = 0;
+
+    // ------------------------------------------------------------
+    // Utility functions
+    // ------------------------------------------------------------
+    function selectedText(select) {
+      return select.options[select.selectedIndex].text;
+    }
+
+    function getContainerRect() {
+      const v = Number(volumeSlider.value);
+      const w = 390 + v * 165;
+      const h = 250 + v * 100;
+
+      return {
+        x: (matterCanvas.width - w) / 2,
+        y: (matterCanvas.height - h) / 2 + 18,
+        w,
+        h
+      };
+    }
+
+    function getParticleNumber() {
+      return [18, 36, 64][Math.round(Number(particleSlider.value))];
+    }
+
+    function getState() {
+      const data = substanceData[substanceSelect.value];
+
+      if (tempLevel <= data.solidMax) return "Solid";
+      if (tempLevel <= data.liquidMax) return "Liquid";
+      return "Gas";
+    }
+
+    function getSpeedFactor() {
+      return 0.55 + tempLevel * 0.55;
+    }
+
+    function getPressure() {
+      const rect = getContainerRect();
+      const volumeFactor = 1 / ((rect.w * rect.h) / (560 * 360));
+      const countFactor = getParticleNumber() / 36;
+      const tempFactor = 0.55 + tempLevel * 0.28;
+      const stateFactor = getState() === "Gas" ? 1.2 : getState() === "Liquid" ? 0.42 : 0.16;
+
+      // Teaching model: hotter + more particles + smaller volume = higher pressure.
+      return Math.min(100, Math.max(5, volumeFactor * countFactor * tempFactor * stateFactor * 45));
+    }
+
+    function pressureLabel(value) {
+      if (value < 30) return "Low";
+      if (value < 65) return "Medium";
+      return "High";
+    }
+
+    function motionLabel() {
+      if (tempLevel < 1.2) return "Slow motion";
+      if (tempLevel < 3.0) return "Medium motion";
+      return "Fast motion";
+    }
+
+    function describeTemperature() {
+      if (tempLevel < 0.5) return "Very cold";
+      if (tempLevel < 1.5) return "Cold";
+      if (tempLevel < 2.5) return "Room temperature";
+      if (tempLevel < 3.5) return "Hot";
+      return "Very hot";
+    }
+
+    function describeVolume() {
+      const v = Number(volumeSlider.value);
+      if (v < 0.67) return "Small";
+      if (v < 1.34) return "Medium";
+      return "Large";
+    }
+
+    function describeParticleCount() {
+      return ["Few", "Medium", "Many"][Math.round(Number(particleSlider.value))];
+    }
+
+    function escapeHTML(text) {
+      return text.replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    // ------------------------------------------------------------
+    // Particle creation
+    // ------------------------------------------------------------
+    function resetParticles() {
+      const rect = getContainerRect();
+      const n = getParticleNumber();
+      const state = getState();
+      const substance = substanceData[substanceSelect.value];
+
+      particles = [];
+
+      if (state === "Solid") {
+        // Solid: particles vibrate around fixed positions.
+        const cols = Math.ceil(Math.sqrt(n * rect.w / rect.h));
+        const rows = Math.ceil(n / cols);
+        const spacingX = rect.w / (cols + 1);
+        const spacingY = rect.h / (rows + 1);
+
+        for (let i = 0; i < n; i++) {
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+          const homeX = rect.x + spacingX * (col + 1);
+          const homeY = rect.y + spacingY * (row + 1);
+
+          particles.push({
+            x: homeX,
+            y: homeY,
+            vx: (Math.random() - 0.5) * 0.6,
+            vy: (Math.random() - 0.5) * 0.6,
+            homeX,
+            homeY,
+            r: 7,
+            colour: substance.colour
+          });
+        }
+      } else if (state === "Liquid") {
+        // Liquid: particles are close together but can slide past one another.
+        const clusterW = rect.w * 0.72;
+        const clusterH = rect.h * 0.62;
+        const startX = rect.x + rect.w * 0.14;
+        const startY = rect.y + rect.h * 0.30;
+
+        for (let i = 0; i < n; i++) {
+          particles.push({
+            x: startX + Math.random() * clusterW,
+            y: startY + Math.random() * clusterH,
+            vx: (Math.random() - 0.5) * getSpeedFactor(),
+            vy: (Math.random() - 0.5) * getSpeedFactor(),
+            r: 7,
+            colour: substance.colour
+          });
+        }
+      } else {
+        // Gas: particles spread out and move quickly through the container.
+        for (let i = 0; i < n; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = getSpeedFactor() * (0.65 + Math.random() * 0.75);
+
+          particles.push({
+            x: rect.x + 12 + Math.random() * (rect.w - 24),
+            y: rect.y + 12 + Math.random() * (rect.h - 24),
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            r: 6,
+            colour: substance.colour
+          });
+        }
+      }
+    }
+
+    // ------------------------------------------------------------
+    // Simulation update
+    // ------------------------------------------------------------
+    function updateParticles() {
+      const rect = getContainerRect();
+      const state = getState();
+      const speedFactor = getSpeedFactor();
+
+      particles.forEach(p => {
+        if (state === "Solid") {
+          const pullX = (p.homeX - p.x) * 0.045;
+          const pullY = (p.homeY - p.y) * 0.045;
+          p.vx = (p.vx + pullX + (Math.random() - 0.5) * 0.18 * speedFactor) * 0.88;
+          p.vy = (p.vy + pullY + (Math.random() - 0.5) * 0.18 * speedFactor) * 0.88;
+          p.x += p.vx;
+          p.y += p.vy;
+        } else if (state === "Liquid") {
+          p.vx += (Math.random() - 0.5) * 0.12 * speedFactor;
+          p.vy += (Math.random() - 0.5) * 0.12 * speedFactor;
+          p.vx *= 0.97;
+          p.vy *= 0.97;
+          p.x += p.vx;
+          p.y += p.vy;
+
+          // Liquids tend to remain lower and closer together than gases.
+          const liquidTop = rect.y + rect.h * 0.25;
+          if (p.y < liquidTop) p.vy += 0.05;
+        } else {
+          const currentSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy) || 1;
+          const targetSpeed = speedFactor * 1.15;
+          p.vx = (p.vx / currentSpeed) * targetSpeed;
+          p.vy = (p.vy / currentSpeed) * targetSpeed;
+          p.x += p.vx;
+          p.y += p.vy;
+        }
+
+        let collided = false;
+
+        if (p.x - p.r < rect.x) {
+          p.x = rect.x + p.r;
+          p.vx *= -1;
+          collided = true;
+        }
+        if (p.x + p.r > rect.x + rect.w) {
+          p.x = rect.x + rect.w - p.r;
+          p.vx *= -1;
+          collided = true;
+        }
+        if (p.y - p.r < rect.y) {
+          p.y = rect.y + p.r;
+          p.vy *= -1;
+          collided = true;
+        }
+        if (p.y + p.r > rect.y + rect.h) {
+          p.y = rect.y + rect.h - p.r;
+          p.vy *= -1;
+          collided = true;
+        }
+
+        // Gas wall collisions are highlighted because they explain pressure.
+        if (collided && state === "Gas" && Math.random() < 0.45) {
+          collisionFlashes.push({ x: p.x, y: p.y, life: 18 });
+        }
+      });
+
+      // Simple particle spacing correction to reduce overlap.
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i];
+          const b = particles[j];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const minDist = a.r + b.r + (getState() === "Gas" ? 3 : 1);
+
+          if (dist < minDist) {
+            const overlap = (minDist - dist) / 2;
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            a.x -= nx * overlap;
+            a.y -= ny * overlap;
+            b.x += nx * overlap;
+            b.y += ny * overlap;
+
+            if (getState() !== "Solid") {
+              const tx = a.vx;
+              const ty = a.vy;
+              a.vx = b.vx * 0.92;
+              a.vy = b.vy * 0.92;
+              b.vx = tx * 0.92;
+              b.vy = ty * 0.92;
+            }
+          }
+        }
+      }
+    }
+
+    function updateHeatingCooling() {
+      const action = heatActionSelect.value;
+      let change = 0;
+
+      if (action === "heatSlow") change = 0.006;
+      if (action === "heatFast") change = 0.026;
+      if (action === "coolSlow") change = -0.006;
+      if (action === "coolFast") change = -0.026;
+
+      const oldState = getState();
+      tempLevel = Math.max(0, Math.min(4, tempLevel + change));
+      temperatureSlider.value = tempLevel.toFixed(2);
+      const newState = getState();
+
+      // Rebuild the particle arrangement when the state changes.
+      if (oldState !== newState) resetParticles();
+    }
+
+    // ------------------------------------------------------------
+    // Drawing functions
+    // ------------------------------------------------------------
+    function drawMatter() {
+      ctx.clearRect(0, 0, matterCanvas.width, matterCanvas.height);
+      drawBackground();
+      drawContainer();
+      drawParticles();
+      drawCollisionFlashes();
+      drawEvaporationCue();
+      drawStateExplanation();
+    }
+
+    function drawBackground() {
+      const grad = ctx.createLinearGradient(0, 0, 0, matterCanvas.height);
+      grad.addColorStop(0, "#e0f2fe");
+      grad.addColorStop(1, "#f8fafc");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, matterCanvas.width, matterCanvas.height);
+
+      ctx.globalAlpha = 0.25;
+      for (let i = 0; i < 55; i++) {
+        const x = (i * 97) % matterCanvas.width;
+        const y = (i * 53) % matterCanvas.height;
+        ctx.fillStyle = "#38bdf8";
+        ctx.beginPath();
+        ctx.arc(x, y, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawContainer() {
+      const rect = getContainerRect();
+
+      ctx.fillStyle = "rgba(255,255,255,0.62)";
+      ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+
+      ctx.strokeStyle = "rgba(14,116,144,0.85)";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+
+      ctx.fillStyle = "#075985";
+      ctx.font = "bold 18px Trebuchet MS, Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Container volume: " + describeVolume(), rect.x + rect.w / 2, rect.y - 14);
+
+      ctx.strokeStyle = "rgba(14,165,233,0.75)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(rect.x + rect.w * 0.25, rect.y);
+      ctx.lineTo(rect.x + rect.w * 0.75, rect.y);
+      ctx.stroke();
+    }
+
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.colour;
+        ctx.fillStyle = p.colour;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "rgba(255,255,255,0.65)";
+        ctx.beginPath();
+        ctx.arc(p.x - p.r * 0.3, p.y - p.r * 0.3, p.r * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.shadowBlur = 0;
+    }
+
+    function drawCollisionFlashes() {
+      collisionFlashes = collisionFlashes.filter(f => f.life > 0);
+      collisionFlashes.forEach(f => {
+        ctx.globalAlpha = f.life / 18;
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, 12 + (18 - f.life), 0, Math.PI * 2);
+        ctx.stroke();
+        f.life -= 1;
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function drawStateExplanation() {
+      const state = getState();
+      const substance = substanceData[substanceSelect.value];
+      const text = state === "Solid"
+        ? `${substance.solidName.toUpperCase()}: particles vibrate in fixed positions`
+        : state === "Liquid"
+          ? "LIQUID: particles stay close but slide past each other"
+          : "GAS: particles spread out and collide with the walls";
+
+      ctx.fillStyle = "rgba(255,255,255,0.88)";
+      ctx.fillRect(24, matterCanvas.height - 70, matterCanvas.width - 48, 44);
+
+      ctx.fillStyle = "#12304a";
+      ctx.font = "bold 20px Trebuchet MS, Arial";
+      ctx.textAlign = "center";
+      ctx.fillText(text, matterCanvas.width / 2, matterCanvas.height - 42);
+    }
+
+
+    function drawEvaporationCue() {
+      if (!(substanceSelect.value === "water" && getState() === "Gas")) return;
+
+      const rect = getContainerRect();
+      ctx.save();
+      ctx.globalAlpha = 0.65;
+      ctx.strokeStyle = "rgba(14,116,144,0.55)";
+      ctx.lineWidth = 3;
+
+      for (let i = 0; i < 6; i++) {
+        const x = rect.x + rect.w * (0.18 + i * 0.13);
+        const y = rect.y + 28 + Math.sin((frameCounter + i * 18) / 18) * 5;
+        ctx.beginPath();
+        ctx.moveTo(x, y + 30);
+        ctx.bezierCurveTo(x - 12, y + 18, x + 14, y + 8, x, y - 4);
+        ctx.stroke();
+      }
+
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#075985";
+      ctx.font = "bold 16px Trebuchet MS, Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Evaporation / boiling: liquid water → water vapour", rect.x + rect.w / 2, rect.y + 28);
+      ctx.restore();
+    }
+
+    // ------------------------------------------------------------
+    // Graph functions
+    // ------------------------------------------------------------
+    function updateGraphData() {
+      if (graphData.length > 120) graphData.shift();
+      graphData.push({
+        temp: (tempLevel / 4) * 100,
+        pressure: getPressure()
+      });
+    }
+
+    function drawGraph() {
+      gctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+      gctx.fillStyle = "#f8fafc";
+      gctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+      // Graph area
+      const left = 48;
+      const top = 18;
+      const bottom = 158;
+      const right = 342;
+
+      // Axes
+      gctx.strokeStyle = "rgba(15,23,42,0.30)";
+      gctx.lineWidth = 1.2;
+      gctx.beginPath();
+      gctx.moveTo(left, top);
+      gctx.lineTo(left, bottom);
+      gctx.lineTo(right, bottom);
+      gctx.stroke();
+
+      // Y-axis tick labels
+      gctx.fillStyle = "rgba(15,23,42,0.72)";
+      gctx.font = "11px Trebuchet MS, Arial";
+      gctx.textAlign = "right";
+      gctx.fillText("100", left - 7, top + 4);
+      gctx.fillText("50", left - 7, (top + bottom) / 2 + 4);
+      gctx.fillText("0", left - 7, bottom + 4);
+
+      // Y-axis label
+      gctx.save();
+      gctx.translate(13, 98);
+      gctx.rotate(-Math.PI / 2);
+      gctx.textAlign = "center";
+      gctx.fillStyle = "#334155";
+      gctx.font = "bold 11px Trebuchet MS, Arial";
+      gctx.fillText("Reading level (%)", 0, 0);
+      gctx.restore();
+
+      // X-axis label
+      gctx.textAlign = "center";
+      gctx.fillStyle = "#334155";
+      gctx.font = "bold 11px Trebuchet MS, Arial";
+      gctx.fillText("Time / observations", (left + right) / 2, 181);
+
+      // Legend
+      gctx.textAlign = "left";
+      gctx.fillStyle = "#b45309";
+      gctx.font = "bold 11px Trebuchet MS, Arial";
+      gctx.fillText("Temperature", 62, 18);
+      gctx.fillStyle = "#b91c1c";
+      gctx.fillText("Pressure", 162, 18);
+
+      drawGraphLine("temp", "#f59e0b");
+      drawGraphLine("pressure", "#ef4444");
+    }
+
+    function drawGraphLine(key, colour) {
+      if (graphData.length < 2) return;
+
+      const left = 48;
+      const top = 18;
+      const bottom = 158;
+      const right = 342;
+
+      gctx.strokeStyle = colour;
+      gctx.lineWidth = 2.5;
+      gctx.beginPath();
+
+      graphData.forEach((point, i) => {
+        const x = left + (i / 119) * (right - left);
+        const y = bottom - (point[key] / 100) * (bottom - top);
+        if (i === 0) gctx.moveTo(x, y);
+        else gctx.lineTo(x, y);
+      });
+
+      gctx.stroke();
+    }
+
+    // ------------------------------------------------------------
+    // UI updates and explanations
+    // ------------------------------------------------------------
+    function updateUI() {
+      const state = getState();
+      const pressure = getPressure();
+      const pressureText = pressureLabel(pressure);
+      const tempPercent = Math.round((tempLevel / 4) * 100);
+      const substance = substanceData[substanceSelect.value];
+
+      temperatureLabel.textContent = describeTemperature();
+      volumeLabel.textContent = describeVolume();
+      particleLabel.textContent = describeParticleCount();
+
+      stateBadge.textContent =
+        state === "Solid" && substanceSelect.value === "water" ? "Solid ice" :
+        state === "Gas" && substanceSelect.value === "water" ? "Water vapour" :
+        state;
+      stateBadge.className = "badge";
+      if (state === "Gas") stateBadge.classList.add("hot");
+      if (state === "Solid") stateBadge.classList.add("good");
+
+      motionBadge.textContent = motionLabel();
+      motionBadge.className = tempLevel >= 3 ? "badge hot" : tempLevel <= 1 ? "badge good" : "badge";
+
+      pressureBadge.textContent = "Pressure: " + pressureText;
+      pressureBadge.className = pressure > 65 ? "badge hot" : pressure < 30 ? "badge good" : "badge";
+
+      stateReadout.textContent =
+        state === "Solid" && substanceSelect.value === "water" ? "Solid ice" :
+        state === "Gas" && substanceSelect.value === "water" ? "Water vapour" :
+        state;
+      tempReadout.textContent = describeTemperature();
+      pressureReadout.textContent = pressureText;
+      volumeReadout.textContent = describeVolume();
+      countReadout.textContent = describeParticleCount();
+
+      thermoFill.style.width = tempPercent + "%";
+      pressureFill.style.width = Math.round(pressure) + "%";
+      thermoValue.textContent = tempPercent + "%";
+      pressureValue.textContent = Math.round(pressure) + "%";
+
+      explanation.innerHTML = makeExplanation(state, pressureText, substance);
+    }
+
+    function makeExplanation(state, pressureText, substance) {
+      if (state === "Solid") {
+        const solidTerm = substanceSelect.value === "water" ? "ice" : "a solid";
+        return `<strong>${substance.name} is behaving like ${solidTerm}.</strong> Cooling has removed energy. The particles are close together and mainly vibrate in fixed positions.`;
+      }
+
+      if (state === "Liquid") {
+        return `<strong>${substance.name} is behaving like a liquid.</strong> The particles are close together, but they can move and slide past each other. Heating gives them more energy.`;
+      }
+
+      return `<strong>${substance.name} is behaving like a gas.</strong> The particles are far apart, move quickly, and collide with the walls. These collisions explain gas pressure. Current pressure is <strong>${pressureText.toLowerCase()}</strong>.`;
+    }
+
+    function recordTrial() {
+      const row = {
+        question: questionInput.value.trim() || "Not written",
+        prediction: predictionInput.value.trim() || "Not written",
+        substance: substanceData[substanceSelect.value].name,
+        temp: describeTemperature(),
+        volume: describeVolume(),
+        count: describeParticleCount(),
+        action: selectedText(heatActionSelect),
+        state: getState(),
+        pressure: pressureLabel(getPressure()),
+        evidence: makeEvidenceSentence()
+      };
+
+      trials.push(row);
+      renderTrials();
+    }
+
+    function makeEvidenceSentence() {
+      const state = getState();
+      const pressure = pressureLabel(getPressure()).toLowerCase();
+      const motion = motionLabel().toLowerCase();
+
+      if (state === "Gas") {
+        return `Particles were far apart with ${motion}; wall collisions showed ${pressure} pressure.`;
+      }
+
+      if (state === "Liquid") {
+        return `Particles stayed close but moved around each other with ${motion}.`;
+      }
+
+      return `Particles stayed in fixed positions and vibrated with ${motion}.`;
+    }
+
+    function renderTrials() {
+      if (trials.length === 0) {
+        trialsArea.textContent = "No trials recorded yet.";
+        return;
+      }
+
+      trialsArea.innerHTML = `
+        <table class="trial-table">
+          <caption>Recorded trials: prediction, variables, and evidence</caption>
+          <thead>
+            <tr>
+              <th>Trial</th>
+              <th>Question</th>
+              <th>Prediction</th>
+              <th>Variables tested</th>
+              <th>Observed result</th>
+              <th>Evidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trials.map((t, i) => `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${escapeHTML(t.question)}</td>
+                <td>${escapeHTML(t.prediction)}</td>
+                <td>
+                  <strong>Substance:</strong> ${t.substance}<br>
+                  <strong>Temperature:</strong> ${t.temp}<br>
+                  <strong>Volume:</strong> ${t.volume}<br>
+                  <strong>Particles:</strong> ${t.count}<br>
+                  <strong>Action:</strong> ${t.action}
+                </td>
+                <td>
+                  <strong>State:</strong> ${t.state}<br>
+                  <strong>Pressure:</strong> ${t.pressure}
+                </td>
+                <td>${t.evidence}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // ------------------------------------------------------------
+    // Main animation loop
+    // ------------------------------------------------------------
+    function animate() {
+      if (running) {
+        updateHeatingCooling();
+      }
+
+      updateParticles();
+
+      frameCounter++;
+      if (frameCounter % 4 === 0) updateGraphData();
+
+      drawMatter();
+      drawGraph();
+      updateUI();
+      requestAnimationFrame(animate);
+    }
+
+    function resetSimulation() {
+      temperatureSlider.value = 2;
+      volumeSlider.value = 1;
+      particleSlider.value = 1;
+      heatActionSelect.value = "none";
+      tempLevel = Number(temperatureSlider.value);
+      graphData = [];
+      collisionFlashes = [];
+      frameCounter = 0;
+      resetParticles();
+      updateGraphData();
+      running = false;
+      playPauseBtn.textContent = "Auto-run";
+      updateUI();
+      drawMatter();
+      drawGraph();
+    }
+
+    // ------------------------------------------------------------
+    // Event listeners
+    // ------------------------------------------------------------
+    playPauseBtn.addEventListener("click", () => {
+      running = !running;
+      playPauseBtn.textContent = running ? "Pause auto-run" : "Auto-run";
+    });
+
+    resetBtn.addEventListener("click", resetSimulation);
+    recordBtn.addEventListener("click", recordTrial);
+
+    temperatureSlider.addEventListener("input", () => {
+      const oldState = getState();
+      tempLevel = Number(temperatureSlider.value);
+      if (oldState !== getState()) resetParticles();
+      updateGraphData();
+      updateUI();
+    });
+
+    particleSlider.addEventListener("input", () => {
+      resetParticles();
+      updateGraphData();
+      updateUI();
+    });
+
+    substanceSelect.addEventListener("change", () => {
+      resetParticles();
+      updateGraphData();
+      updateUI();
+    });
+
+    volumeSlider.addEventListener("input", () => {
+      const rect = getContainerRect();
+      particles.forEach(p => {
+        p.x = Math.min(Math.max(p.x, rect.x + p.r), rect.x + rect.w - p.r);
+        p.y = Math.min(Math.max(p.y, rect.y + p.r), rect.y + rect.h - p.r);
+      });
+      updateGraphData();
+      updateUI();
+    });
+
+    resetSimulation();
+    animate();
+  </script>
+</body>
+</html>

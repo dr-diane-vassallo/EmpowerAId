@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Plant Growth Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap');
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #e0f2f1;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 { font-family: 'Fredoka One', cursive; }
+
+        .game-card {
+            width: 100%;
+            max-width: 550px;
+            background: white;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            border: 10px solid #ffffff;
+        }
+
+        /* Sky Area */
+        .sky {
+            height: 300px;
+            position: relative;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F2F1 100%);
+            transition: background 0.5s ease;
+            overflow: hidden;
+        }
+
+        .sun {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 40px #FFD700;
+            transition: all 0.5s ease;
+        }
+
+        /* Rain Drops */
+        .rain-drop {
+            position: absolute;
+            background: #64B5F6;
+            width: 2px;
+            height: 10px;
+            top: -20px;
+            animation: fall linear infinite;
+        }
+        @keyframes fall { to { transform: translateY(320px); } }
+
+        /* The Plant */
+        .plant-box {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+            transition: transform 0.5s ease;
+            transform-origin: bottom center;
+        }
+
+        .stem {
+            width: 12px;
+            background-color: #4CAF50;
+            border-radius: 6px;
+            transition: height 0.3s ease, background-color 0.5s ease;
+            position: relative;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 16px;
+            background-color: #81C784;
+            border-radius: 50% 50% 0 50%;
+            transition: all 0.6s ease;
+        }
+        .leaf-left { left: -26px; transform: rotate(-25deg); }
+        .leaf-right { right: -26px; transform: rotate(205deg); }
+
+        /* Withered/Drooping */
+        .droop-left { transform: rotate(40deg) translateY(8px) !important; }
+        .droop-right { transform: rotate(140deg) translateY(8px) !important; }
+        .tilt-plant { transform: translateX(-50%) rotate(8deg); }
+
+        .flower {
+            position: absolute;
+            top: -55px;
+            width: 60px;
+            height: 60px;
+            transform: scale(0);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Dirt Area */
+        .dirt-container {
+            height: 120px;
+            background: #5D4037;
+            position: relative;
+            transition: background 0.8s ease;
+            border-top: 4px solid #4E342E;
+        }
+
+        .puddle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: rgba(33, 150, 243, 0.5);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .msg-bubble {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 180px;
+            z-index: 20;
+        }
+
+        /* Custom Sliders */
+        .slider-group {
+            padding: 20px;
+            background: #f1f8e9;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        #sunSlide { background: #fff9c4; }
+        #waterSlide { background: #e3f2fd; }
+        #soilSlide { background: #efebe9; }
+
+        #sunSlide::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: #fbc02d; border-radius: 50%; cursor: pointer; border: 3px solid white; }
+        #waterSlide::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: #1e88e1; border-radius: 50%; cursor: pointer; border: 3px solid white; }
+        #soilSlide::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: #5d4037; border-radius: 50%; cursor: pointer; border: 3px solid white; }
+    </style>
+</head>
+<body>
+
+<div class="game-card">
+    <!-- Top Header -->
+    <div class="bg-green-500 p-4 text-white text-center">
+        <h1 class="text-2xl">Can you grow the flower?</h1>
+    </div>
+
+    <!-- The Simulation View -->
+    <div class="sky" id="skyArea">
+        <div id="sun" class="sun"></div>
+        <div id="rain"></div>
+        <div id="msg" class="msg-bubble text-green-800">Hello! Will you be my gardener?</div>
+        
+        <div id="plant" class="plant-box">
+            <div id="flower" class="flower">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="15" fill="#FFD600" />
+                    <circle cx="50" cy="22" r="18" fill="#E91E63" />
+                    <circle cx="78" cy="50" r="18" fill="#E91E63" />
+                    <circle cx="50" cy="78" r="18" fill="#E91E63" />
+                    <circle cx="22" cy="50" r="18" fill="#E91E63" />
+                </svg>
+            </div>
+            <div id="stem" class="stem" style="height: 0px;"></div>
+        </div>
+
+        <div class="dirt-container" id="dirt">
+            <div id="puddle" class="puddle"></div>
+            <div id="seed" class="absolute top-2 left-1/2 -translate-x-1/2 w-6 h-4 bg-[#3E2723] rounded-full"></div>
+            
+            <!-- Roots visualization -->
+            <div id="roots" class="absolute top-4 left-1/2 -translate-x-1/2 opacity-0 transition-opacity duration-1000">
+                <svg width="40" height="60" viewBox="0 0 40 60">
+                    <path d="M20 0 Q25 20 35 40 M20 0 Q15 20 5 40 M20 0 Q20 30 20 55" stroke="#8D6E63" stroke-width="2" fill="none" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="slider-group space-y-6">
+        <!-- Sun Control -->
+        <div class="space-y-1">
+            <div class="flex justify-between font-bold text-yellow-700">
+                <span>☀️ Sunlight</span>
+                <span id="sunStatus">Medium</span>
+            </div>
+            <input type="range" id="sunSlide" value="50">
+        </div>
+
+        <!-- Water Control -->
+        <div class="space-y-1">
+            <div class="flex justify-between font-bold text-blue-700">
+                <span>💧 Water</span>
+                <span id="waterStatus">Medium</span>
+            </div>
+            <input type="range" id="waterSlide" value="50">
+        </div>
+
+        <!-- Soil Control -->
+        <div class="space-y-1">
+            <div class="flex justify-between font-bold text-stone-700">
+                <span>🌱 Soil Quality</span>
+                <span id="soilStatus">Rich Soil</span>
+            </div>
+            <input type="range" id="soilSlide" value="70">
+        </div>
+
+        <!-- Reset Button -->
+        <div class="flex justify-center pt-2">
+            <button onclick="resetSim()" class="bg-orange-500 hover:bg-orange-600 text-white px-10 py-3 rounded-full font-bold shadow-lg active:scale-90 transition-transform">
+                Start Again
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let growth = 0;
+    let health = 100;
+    let isDead = false;
+
+    const el = {
+        sun: document.getElementById('sunSlide'),
+        water: document.getElementById('waterSlide'),
+        soil: document.getElementById('soilSlide'),
+        stem: document.getElementById('stem'),
+        flower: document.getElementById('flower'),
+        msg: document.getElementById('msg'),
+        rain: document.getElementById('rain'),
+        puddle: document.getElementById('puddle'),
+        sky: document.getElementById('skyArea'),
+        dirt: document.getElementById('dirt'),
+        seed: document.getElementById('seed'),
+        roots: document.getElementById('roots'),
+        plant: document.getElementById('plant')
+    };
+
+    function update() {
+        const s = parseInt(el.sun.value);
+        const w = parseInt(el.water.value);
+        const l = parseInt(el.soil.value);
+
+        // 1. Text Labels
+        document.getElementById('sunStatus').innerText = s < 30 ? "Too Dark" : s > 85 ? "Too Hot!" : "Perfect Light";
+        document.getElementById('waterStatus').innerText = w < 30 ? "Dry" : w > 80 ? "Drowning!" : "Perfect Water";
+        document.getElementById('soilStatus').innerText = l < 35 ? "Poor/Sandy" : l > 75 ? "Rich Soil" : "Good Soil";
+
+        // 2. Environmental Visuals
+        document.getElementById('sun').style.transform = `scale(${0.4 + s/100})`;
+        el.sky.style.backgroundColor = `hsl(200, 70%, ${80 + s/15}%)`;
+        
+        // Soil Color
+        // From Sandy (HSL 40, 30%, 70%) to Rich (HSL 20, 40%, 20%)
+        const dirtLight = 70 - (l * 0.5);
+        el.dirt.style.backgroundColor = `hsl(25, 30%, ${dirtLight}%)`;
+
+        // Rain & Puddles
+        el.rain.innerHTML = '';
+        if (w > 80) {
+            el.puddle.style.opacity = (w - 80) / 20;
+            for(let i=0; i<12; i++) {
+                let d = document.createElement('div');
+                d.className = 'rain-drop';
+                d.style.left = Math.random() * 100 + '%';
+                d.style.animationDuration = (0.3 + Math.random() * 0.4) + 's';
+                el.rain.appendChild(d);
+            }
+        } else {
+            el.puddle.style.opacity = 0;
+        }
+
+        if (isDead) return;
+
+        // 3. Growth Logic
+        let tickGrowth = 0;
+        let tickHealth = 0;
+
+        // Condition checks
+        const sunOK = s >= 35 && s <= 85;
+        const waterOK = w >= 35 && w <= 75;
+        const soilOK = l >= 40;
+
+        if (sunOK && waterOK && soilOK) {
+            // Soil quality directly boosts growth speed
+            tickGrowth = 0.2 + (l / 200); 
+            tickHealth = 1;
+            el.msg.innerText = "I'm happy and growing! ✨";
+            el.msg.style.color = "#2E7D32";
+        } else {
+            tickHealth = -0.6;
+            if (s < 30) {
+                tickGrowth = 0.04; // Very stunted
+                el.msg.innerText = "It's too dark... I feel pale.";
+                el.msg.style.color = "#558B2F";
+            } else if (w > 80) {
+                tickGrowth = -0.1; 
+                el.msg.innerText = "Glub glub! Too much water!";
+                el.msg.style.color = "#D32F2F";
+            } else if (w < 30) {
+                tickGrowth = 0;
+                el.msg.innerText = "I'm thirsty! Help!";
+                el.msg.style.color = "#D32F2F";
+            } else if (l < 40) {
+                tickGrowth = 0.05;
+                el.msg.innerText = "The soil is too poor for me.";
+                el.msg.style.color = "#795548";
+            }
+        }
+
+        growth = Math.max(0, Math.min(100, growth + tickGrowth));
+        health = Math.max(0, Math.min(100, health + tickHealth));
+
+        if (health <= 0) {
+            isDead = true;
+            el.msg.innerText = "The plant withered. Try again?";
+            el.msg.style.color = "#000";
+        }
+
+        render(s, w, l);
+    }
+
+    function render(s, w, l) {
+        // Height
+        el.stem.style.height = (growth * 2.5) + 'px';
+        
+        // Seed & Roots
+        el.seed.style.opacity = growth > 12 ? 0 : 1;
+        el.roots.style.opacity = growth > 15 ? 0.6 : 0;
+        el.roots.style.transform = `translateX(-50%) scale(${0.5 + growth/100})`;
+
+        // Colors
+        let color = "#4CAF50"; // Healthy Green
+        if (isDead) color = "#8D6E63"; // Brown
+        else if (w > 80 || health < 50) color = "#C0CA33"; // Yellowy
+        else if (s < 30) color = "#A5D6A7"; // Pale green
+
+        el.stem.style.backgroundColor = color;
+
+        // Leaves
+        const target = Math.floor(growth / 18);
+        const current = el.stem.querySelectorAll('.leaf');
+        
+        if (target > current.length) {
+            let leaf = document.createElement('div');
+            let side = current.length % 2 === 0 ? 'leaf-left' : 'leaf-right';
+            leaf.className = `leaf ${side}`;
+            leaf.style.bottom = (current.length * 40 + 20) + 'px';
+            el.stem.appendChild(leaf);
+        } else if (target < current.length) {
+            el.stem.removeChild(el.stem.lastChild);
+        }
+
+        // Withering effects
+        el.stem.querySelectorAll('.leaf').forEach(leaf => {
+            leaf.style.backgroundColor = color;
+            if (w > 80 || w < 20 || health < 60) {
+                leaf.classList.add(leaf.classList.contains('leaf-left') ? 'droop-left' : 'droop-right');
+                el.plant.classList.add('tilt-plant');
+            } else {
+                leaf.classList.remove('droop-left', 'droop-right');
+                el.plant.classList.remove('tilt-plant');
+            }
+        });
+
+        // Bloom
+        if (growth > 98 && health > 70) {
+            el.flower.style.transform = "translateX(-50%) scale(1)";
+        } else {
+            el.flower.style.transform = "translateX(-50%) scale(0)";
+        }
+    }
+
+    function resetSim() {
+        growth = 0; health = 100; isDead = false;
+        el.stem.innerHTML = '';
+        el.flower.style.transform = "translateX(-50%) scale(0)";
+        el.sun.value = 50; el.water.value = 50; el.soil.value = 70;
+        el.plant.classList.remove('tilt-plant');
+        update();
+    }
+
+    setInterval(update, 100);
+    update();
+</script>
+
+</body>
+</html>
